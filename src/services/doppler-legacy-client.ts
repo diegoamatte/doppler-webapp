@@ -33,6 +33,8 @@ export interface DopplerLegacyClient {
   requestSuggestionUpgradeForm(
     requestUpgradeModel: RequestUpgradeModel,
   ): Promise<ReturnUpgradeFormResult>;
+  getSubscriberValidationFormData() : Promise<SubscriberValidationFormData>;
+  sendSubscriberValidation(subscriberValidationData: SubscriberValidationFormData): Promise<any>;
 }
 
 interface PayloadWithCaptchaToken {
@@ -578,6 +580,84 @@ export function mapHeaderDataJson(json: any) {
 
 /* #endregion */
 
+/* #region Maxsubscribers data */
+export interface SubscriberValidationFormData{
+  isSentSuccessEmail: boolean;
+  questionsList: SubscriberValidationQuestion[];
+  urlHelp: string;
+  urlReferrer: string
+}
+
+export interface SubscriberValidationQuestion{
+  question: string;
+  answer: SubscriberValidationAnswer
+}
+
+export interface SubscriberValidationAnswer{
+  answerType: string;
+  answerOptions: string[];
+  value: string;
+  optionsSelected: string;
+}
+
+export enum AnswerType{
+  TEXTFIELD = 1,
+  CHECKBOX = 2,
+  CHECKBOX_WITH_TEXTAREA = 3,
+  DROPDOWN = 4,
+  RADIOBUTTON = 5,
+  URL = 6
+}
+
+function mapMaxSubscriberAnswer(json: any): SubscriberValidationQuestion{
+  return {
+    question: json.Question,
+    answer:{
+      answerType: AnswerType[json.Answer?.AnswerType],
+      answerOptions: json.Answer?.AnswerOptions,
+      optionsSelected: json.Answer?.OptionsSelected ?? "",
+      value: json.Answer?.Value ?? ""
+    }
+  }
+}
+
+function mapMaxSubscriber(json: any): SubscriberValidationFormData{
+  return {
+    isSentSuccessEmail: json.data.IsSentSuccessEmail,
+    questionsList: json.data.QuestionsList.map(
+      (question:any) => mapMaxSubscriberAnswer(question)
+    ),
+    urlHelp: json.data.UrlHelp,
+    urlReferrer: json.data.UrlReferrer
+  }
+}
+
+function mapAnswerToNumber(questionItem: SubscriberValidationQuestion){
+  return {
+    question: questionItem.question,
+    answer:{
+      answerType: (AnswerType)[questionItem.answer?.answerType as any],
+      answerOptions: questionItem.answer?.answerOptions,
+      optionsSelected: questionItem?.answer?.optionsSelected,
+      value: questionItem.answer?.value 
+    }
+  }
+}
+
+function mapFormDataJson(subscriberValidation: SubscriberValidationFormData){
+  return {
+    isSentSuccessEmail: subscriberValidation.isSentSuccessEmail,
+    questionsList: subscriberValidation.questionsList.map(
+      (questionItem: SubscriberValidationQuestion) => mapAnswerToNumber(questionItem)
+    ),
+    urlHelp: subscriberValidation.urlHelp,
+    urlReferrer: subscriberValidation.urlReferrer
+  }
+}
+
+/* #endregion */
+
+
 export class HttpDopplerLegacyClient implements DopplerLegacyClient {
   private readonly axios: AxiosInstance;
   private readonly baseUrl: string;
@@ -799,6 +879,7 @@ export class HttpDopplerLegacyClient implements DopplerLegacyClient {
     } catch (e) {
       // TODO: deal with this error in a better way
       console.log('Error resending registration email', e);
+      // console.log('Error resending registration email', e);
     }
   }
 
@@ -1012,4 +1093,23 @@ export class HttpDopplerLegacyClient implements DopplerLegacyClient {
     };
     // return { success: false };
   }
+  public async getSubscriberValidationFormData() : Promise<SubscriberValidationFormData>{
+    const response = await this.axios.get('/sendmaxsubscribersemail/getmaxsubscribersdata');
+    if (!response?.data) {
+      throw new Error('Empty Doppler response');
+    }
+    return mapMaxSubscriber(response.data);
+  }
+
+  public async sendSubscriberValidation(subscriberValidationData: SubscriberValidationFormData){
+    const response = await this.axios.post('/sendmaxsubscribersemail/sendemailpopup',subscriberValidationData );
+    if (!response.data.success) {
+      return {
+        message: response.data.error || null,
+      };
+    }
+
+    return { success: true };
+  }
+
 }

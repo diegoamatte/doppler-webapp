@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import Modal from '../../../components/Modal/Modal';
 import UpgradePlanForm from '../../UpgradePlanForm/UpgradePlanForm';
+import ValidateSubscribersForm from '../../ValidateSubscribersForm/ValidateSubscribersForm';
 
 const HeaderMessages = ({ alert, user }) => {
   const [buyModalIsOpen, setBuyModalIsOpen] = useState(false);
-
   const toggleModal = (isOpen) => setBuyModalIsOpen(isOpen);
-
-  return alert.button && alert.button.action && alert.button.action !== 'updatePlanPopup' ? null : (
+  return (
     <div className={'messages-container sticky ' + alert.type}>
       <div className="wrapper">
         <p>{alert.message}</p>
@@ -31,11 +30,15 @@ const HeaderMessages = ({ alert, user }) => {
           <></>
         )}
       </div>
-      <Modal className="modal" isOpen={buyModalIsOpen} handleClose={() => toggleModal(false)}>
-        <UpgradePlanForm
-          isSubscriber={user.plan.isSubscribers}
-          handleClose={() => toggleModal(false)}
-        />
+      <Modal className="modal" isOpen={buyModalIsOpen} handleClose={() => toggleModal(false)} type={alert.button?.action === "validateSubscribersPopup"? "large":"medium"}>
+        {alert.button?.action === "validateSubscribersPopup" ?
+          <ValidateSubscribersForm
+            handleClose={() => toggleModal(false)}
+          /> :
+          <UpgradePlanForm
+            isSubscriber={user.plan.isSubscribers}
+            handleClose={() => toggleModal(false)}
+          />}
       </Modal>
     </div>
   );

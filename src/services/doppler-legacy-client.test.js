@@ -426,4 +426,16 @@ describe('Doppler legacy client', () => {
     expect(planList[0].type).toBe('monthly-deliveries');
     expect(planList[0].billingCycleDetails).toBeUndefined();
   });
+
+  it('should return email form validation questions', async() =>{
+        // Arrange
+        const sut = new HttpDopplerLegacyClient({
+          axiosStatic: axios,
+          baseUrl: 'http://localhost:52191',
+        });
+        axios.get.mockImplementation(()=> );
+        // Act
+        const val = await sut.getSubscriberValidationFormData();
+        // ASsert
+  })
 });

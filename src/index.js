@@ -41,20 +41,20 @@ const locale = availableLanguageOrDefault(navigator.language.toLowerCase().split
 const forcedServices =
   process.env.NODE_ENV === 'development' || process.env.REACT_APP_IS_DEMO_ENABLED
     ? {
-        dopplerLegacyClient: new HardcodedDopplerLegacyClient(),
-        dopplerSitesClient: new HardcodedDopplerSitesClient(),
-        datahubClient: new HardcodedDatahubClient(),
-        shopifyClient: new HardcodedShopifyClient(),
-        dopplerApiClient: new HardcodedDopplerApiClient(),
-        ipinfoClient: new HardcodedIpinfoClient(),
-        dopplerBillingApiClient: new HardcodedDopplerBillingApiClient(),
-        bigQueryClient: new HardcodedBigQueryClient(),
-        reportClient: new HardcodedReportClient(),
-        dopplerUserApiClient: new HardcodedDopplerUserApiClient(),
-        dopplerContactPolicyApiClient: new HardcodedDopplerContactPolicyApiClient(),
-        staticDataClient: new HardcodedStaticDataClient(),
-        dopplerBillingUserApiClient: new HardcodedDopplerBillingUserApiClient(),
-        dopplerAccountPlansApiClient: new HardcodedDopplerAccountPlansApiClient(),
+        // dopplerLegacyClient: new HardcodedDopplerLegacyClient(),
+        // dopplerSitesClient: new HardcodedDopplerSitesClient(),
+        // datahubClient: new HardcodedDatahubClient(),
+        // shopifyClient: new HardcodedShopifyClient(),
+        // dopplerApiClient: new HardcodedDopplerApiClient(),
+        // ipinfoClient: new HardcodedIpinfoClient(),
+        // dopplerBillingApiClient: new HardcodedDopplerBillingApiClient(),
+        // bigQueryClient: new HardcodedBigQueryClient(),
+        // reportClient: new HardcodedReportClient(),
+        // dopplerUserApiClient: new HardcodedDopplerUserApiClient(),
+        // dopplerContactPolicyApiClient: new HardcodedDopplerContactPolicyApiClient(),
+        // staticDataClient: new HardcodedStaticDataClient(),
+        // dopplerBillingUserApiClient: new HardcodedDopplerBillingUserApiClient(),
+        // dopplerAccountPlansApiClient: new HardcodedDopplerAccountPlansApiClient(),
       }
     : {};
 
